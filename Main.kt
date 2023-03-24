@@ -1,8 +1,135 @@
 package tasklist
 
+import kotlinx.datetime.*
+import java.lang.Exception
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.system.exitProcess
 
+fun main() {
+    // write your code here
+    val lTasks = ListOfTasks()
+    while (true) {
+        println("Input an action (add, print, end):")
+        val action = readln()
+        if ("add".equals(action, ignoreCase = true)) {
+            val newTask = Task()
 
+            newTask.taskPriority()
+            newTask.taskDate()
+            newTask.taskTime()
+
+            println("Input a new task (enter a blank line to end):")
+
+            var firstLine = true
+            while (true) {
+                val line = readln().trim()
+                if (line.isEmpty() && firstLine) {
+                    println("The task is blank")
+                    break
+                } else if (line.isEmpty()) {
+                    lTasks.addTask(newTask)
+                    break
+                } else {
+                    newTask.addStep(line)
+                }
+                firstLine = false
+            }
+        } else if ("print".equals(action, ignoreCase = true)) {
+            lTasks.printTasks()
+        } else if ("end".equals(action, ignoreCase = true)) {
+            println("Tasklist exiting!")
+            exitProcess(0)
+        } else {
+            println("The input action is invalid")
+        }
+    }
+}
+
+class Task {
+    private var steps = mutableListOf<String>()
+
+    fun taskPriority() {
+        while (true) {
+            println("Input the task priority (C, H, N, L):")
+            val priority = readln().uppercase()
+            if (priority == "C" || priority == "H" || priority == "N" || priority == "L") {
+                steps.add(priority)
+                break
+            }
+        }
+    }
+
+    fun taskDate() {
+        while (true) {
+            println("Input the date (yyyy-mm-dd):")
+            val input = readln()
+            try {
+                val lDate = input.split("-").map { it.toInt() }
+                val date = LocalDate(lDate[0], lDate[1], lDate[2]).toString()
+                steps[0] = "$date ${steps[0]}"
+                break
+            } catch (e: Exception) {
+                println("The input date is invalid")
+            }
+        }
+    }
+
+    fun taskTime() {
+        while (true) {
+            println("Input the time (hh:mm):")
+            val input = readln()
+            try {
+                val lTime = input.split(":").map { it.toInt() }
+                val time = LocalDateTime(1, 1, 1, lTime[0], lTime[1]).toString()
+                val steps0 = steps[0].split(" ")
+                steps[0] = "${steps0[0]} ${time.takeLast(5)} ${steps0[1]}"
+                break
+            } catch (e: Exception) {
+                println("The input time is invalid")
+            }
+        }
+    }
+
+    fun addStep(line: String) {
+        steps.add(line)
+    }
+
+    fun printSteps() {
+        for (index in steps.indices) {
+            if (index == 0) {
+                println(steps[index])
+            } else {
+                println("   ${steps[index]}")
+            }
+        }
+    }
+}
+
+class ListOfTasks {
+    private var listTasks = mutableListOf<Task>()
+    fun addTask(task: Task) {
+        listTasks.add(task)
+    }
+
+    fun printTasks() {
+        if (listTasks.size != 0) {
+            for (index in listTasks.indices) {
+                if (index < 9) {
+                    print("${index + 1}  ")
+                    listTasks[index].printSteps()
+                } else {
+                    print("${index + 1} ")
+                    listTasks[index].printSteps()
+                }
+                println()
+            }
+        } else {
+            println("No tasks have been input")
+        }
+    }
+}
+/*Part 2
 fun main() {
     // write your code here
     val lTasks = ListOfTasks()
@@ -77,7 +204,7 @@ class ListOfTasks {
             println("No tasks have been input")
         }
     }
-}
+}*/
 
 
 /* Part 1
