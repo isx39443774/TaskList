@@ -267,8 +267,6 @@ fun main() {
                     tasks.add(task)
                 }
             }
-
-
         }
     }
     checkAndLoadTasksFile()
